@@ -1,14 +1,15 @@
 "use client";
 
+import { supabase } from '@/lib/supabase';
 import React, { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 // Importa o teu Modal aqui (garante que o ficheiro existe na pasta components)
 import RegisterModal from '@/components/RegisterModal'; 
 
-const supabase = createClient(
+
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+
 
 export default function STLMakerPro() {
   const [shape, setShape] = useState('Osso');
