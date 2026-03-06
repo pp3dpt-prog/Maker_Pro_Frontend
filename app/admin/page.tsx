@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Ticket, Users, CreditCard, Activity, Plus } from 'lucide-react';
 import CreateCouponForm from '@/components/admin/CreateCouponForm';
-import { createClient } from '@supabase/supabase-js'
+
+
 
 
 
