@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { supabase } from '@/lib/supabase';
-import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-// Importa o teu Modal aqui (garante que o ficheiro existe na pasta components)
-import RegisterModal from '@/components/RegisterModal'; 
+import { useState, useEffect } from 'react';
+// Use APENAS esta linha para o supabase
+import { supabase } from '@/lib/supabase'; 
+import { Ticket, Users, CreditCard, Activity, Plus } from 'lucide-react';
+import CreateCouponForm from '@/components/admin/CreateCouponForm';
+import STLViewer from '@/components/STLViewer';
+import RegisterModal from '@/components/RegisterModal';
 
-
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+// APAGUE as linhas que usam createClient, supabaseUrl e supabaseKey aqui!
 
 
 export default function STLMakerPro() {
@@ -159,13 +159,15 @@ export default function STLMakerPro() {
             <p style={{color: '#3b82f6', letterSpacing: '2px', fontSize: '12px'}}>GERANDO GEOMETRIA...</p>
           </div>
         )}
-        <div className="model-placeholder">
-          <div style={{textAlign: 'center'}}>
-            <span style={{fontSize: '48px', display: 'block', marginBottom: '10px'}}>{shape === 'Coração' ? '❤️' : '💎'}</span>
-            <span>Visualizador 3D: {shape}</span>
-            <p style={{fontSize: '12px', marginTop: '10px'}}>{name ? `Texto: ${name}` : 'Sem personalização'}</p>
+
+        {/* Se houver uma URL (seja a branca ou a gerada), mostra o visualizador */}
+        {stlUrl ? (
+          <STLViewer url={stlUrl} />
+        ) : (
+          <div className="model-placeholder">
+            <span>Carregando visualizador...</span>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
