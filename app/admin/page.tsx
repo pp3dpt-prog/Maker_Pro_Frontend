@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Ticket, Users, CreditCard, Activity, Plus } from 'lucide-react';
 import CreateCouponForm from '@/components/admin/CreateCouponForm';
+import { createClient } from '@supabase/supabase-js'
+
+
 
 // 1. Definir o que é um Cupão para o TypeScript
 interface Cupom {
@@ -16,12 +19,14 @@ interface Cupom {
   created_at: string;
 }
 
+
 export default function AdminDashboard() {
   const [showModal, setShowModal] = useState(false);
   // 2. Tipar o useState para aceitar uma lista de Cupões
   const [cupons, setCupons] = useState<Cupom[]>([]);
   const [stats, setStats] = useState({ users: 0, tickets: 0 });
   const [loading, setLoading] = useState(true);
+  
 
   const fetchData = async () => {
     setLoading(true);
