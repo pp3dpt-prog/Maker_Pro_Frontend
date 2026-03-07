@@ -30,6 +30,7 @@ export default function STLMakerPro() {
 
   const handlePreview = async () => {
     setIsGenerating(true);
+    setStlUrl(null);
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     try {
       const response = await fetch(`${backendUrl}/gerar-stl-pro`, {
@@ -42,7 +43,7 @@ export default function STLMakerPro() {
       if (data.url) setStlUrl(data.url); 
       else alert("Erro no motor: " + (data.error || "Desconhecido"));
     } catch (err) {
-      alert("Erro ao ligar ao servidor. Garante que o server.js está a correr.");
+      alert("Erro ao ligar ao servidor. Reporta o erro para o suporte.");
     } finally {
       setIsGenerating(false);
     }
