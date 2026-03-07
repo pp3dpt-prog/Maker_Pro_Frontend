@@ -156,16 +156,16 @@ export default function STLMakerPro() {
         {isGenerating && (
           <div className="loading-overlay">
             <div className="spinner"></div>
-            <p style={{color: '#3b82f6', letterSpacing: '2px', fontSize: '12px'}}>GERANDO GEOMETRIA...</p>
+            <p style={{color: '#3b82f6', letterSpacing: '2px', fontSize: '12px'}}>GERANDO...</p>
           </div>
         )}
-
-        {/* Se houver uma URL (seja a branca ou a gerada), mostra o visualizador */}
+      
+        {/* AQUI ESTÁ A MUDANÇA: Usamos o componente STLViewer se houver stlUrl */}
         {stlUrl ? (
           <STLViewer url={stlUrl} />
         ) : (
           <div className="model-placeholder">
-            <span>Carregando visualizador...</span>
+            <span>A carregar visualizador...</span>
           </div>
         )}
       </div>
