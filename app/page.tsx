@@ -36,7 +36,7 @@ export default function STLMakerPro() {
       const response = await fetch(`${backendUrl}/gerar-stl-pro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome: name, telefone: phone, forma: shape, tamanho: 'M' }),
+        body: JSON.stringify({ nome: name, telefone: phone, forma: shape }),
       });
 
       const data = await response.json();
@@ -128,8 +128,22 @@ export default function STLMakerPro() {
 
         <div className="section">
           <span className="label">2. Dados da Peça</span>
-          <input type="text" placeholder="Nome (Frente)" onChange={(e) => setName(e.target.value)} />
-          <input type="text" placeholder="Telemóvel (Verso)" onChange={(e) => setPhone(e.target.value)} />
+          
+          {/* ADICIONA O value={name} e value={phone} */}
+          <input 
+            type="text" 
+            placeholder="Nome (Frente)" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+          />
+          
+          <input 
+            type="text" 
+            placeholder="Telemóvel (Verso)" 
+            value={phone} 
+            onChange={(e) => setPhone(e.target.value)} 
+          />
+          
           <button className="btn-main" onClick={handlePreview}>VISUALIZAR AGORA</button>
         </div>
 
