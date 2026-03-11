@@ -173,7 +173,7 @@ export default function STLMakerPro() {
         {isGenerating && (
           <div className="loading-overlay">
             <div className="spinner"></div>
-            <p style={{color: '#3b82f6', letterSpacing: '2px', fontSize: '12px'}}>GERANDO...</p>
+            <p style={{color: '#ecedee', letterSpacing: '2px', fontSize: '12px'}}>GERANDO...</p>
           </div>
         )}
       
