@@ -24,6 +24,7 @@ export default function STLMakerPro() {
   const [wantNotifications, setWantNotifications] = useState(false);
   const [notificationEmail, setNotificationEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedFormat, setSelectedFormat] = useState('stl');
 
   // Efeito para carregar a forma "em branco" inicial
   useEffect(() => {
@@ -114,8 +115,27 @@ export default function STLMakerPro() {
             {wantNotifications && (
               <p style={{color: '#64748b', fontSize: '13px', marginBottom: '20px'}}>Vamos enviar novidades para: <strong>{notificationEmail}</strong></p>
             )}
-            <a href={stlUrl} download onClick={() => setShowThankYou(false)} style={{display: 'inline-block', padding: '12px 28px', background: '#3b82f6', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', cursor: 'pointer', border: 'none'}}>
-              Descarregar STL
+            <a href={stlUrl} download={`${name || 'modelo'}.${selectedFormat}`} onClick={async (e) => {
+              e.preventDefault();
+              try {
+                const fileUrl = selectedFormat === '3mf' ? stlUrl.replace('.stl', '.3mf') : stlUrl;
+                const response = await fetch(fileUrl);
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${name || 'modelo'}.${selectedFormat}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+              } catch (err) {
+                console.error("Erro ao descarregar:", err);
+                alert("Erro ao descarregar o ficheiro. Tenta novamente.");
+              }
+              setShowThankYou(false);
+            }} style={{display: 'inline-block', padding: '12px 28px', background: '#3b82f6', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', cursor: 'pointer', border: 'none'}}>
+              Descarregar {selectedFormat.toUpperCase()}
             </a>
           </div>
         </div>
@@ -236,17 +256,59 @@ export default function STLMakerPro() {
             {!showDownload ? (
               <button className="btn-main" style={{background: '#059669'}} onClick={handleFinalSubmit}>LIBERTAR FICHEIRO</button>
             ) : (
-              <div style={{display: 'flex', gap: '10px'}}>
-                <button className="btn-main" style={{background: 'linear-gradient(to right, #f59e0b, #d97706)', flex: 1}} onClick={() => {
-                  const link = document.createElement('a');
-                  link.href = stlUrl;
-                  link.download = 'modelo.stl';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                }}>
-                  DESCARREGAR STL
-                </button>
+              <div>
+                {/* Selector de Formato */}
+                <div style={{marginBottom: '15px', padding: '12px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '8px'}}>
+                  <label style={{fontSize: '12px', color: '#64748b', marginBottom: '10px', display: 'block', fontWeight: 'bold'}}>ESCOLHE O FORMATO:</label>
+                  <div style={{display: 'flex', gap: '15px'}}>
+                    <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}>
+                      <input 
+                        type="radio" 
+                        name="format" 
+                        value="stl"
+                        checked={selectedFormat === 'stl'}
+                        onChange={(e) => setSelectedFormat(e.target.value)}
+                        style={{cursor: 'pointer'}}
+                      />
+                      <span style={{fontSize: '14px'}}>STL</span>
+                    </label>
+                    <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}>
+                      <input 
+                        type="radio" 
+                        name="format" 
+                        value="3mf"
+                        checked={selectedFormat === '3mf'}
+                        onChange={(e) => setSelectedFormat(e.target.value)}
+                        style={{cursor: 'pointer'}}
+                      />
+                      <span style={{fontSize: '14px'}}>3MF</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Botão Download */}
+                <div style={{display: 'flex', gap: '10px'}}>
+                  <button className="btn-main" style={{background: 'linear-gradient(to right, #f59e0b, #d97706)', flex: 1}} onClick={async () => {
+                    try {
+                      const fileUrl = selectedFormat === '3mf' ? stlUrl.replace('.stl', '.3mf') : stlUrl;
+                      const response = await fetch(fileUrl);
+                      const blob = await response.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = `${name || 'modelo'}.${selectedFormat}`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                    } catch (err) {
+                      console.error("Erro ao descarregar:", err);
+                      alert("Erro ao descarregar o ficheiro. Tenta novamente.");
+                    }
+                  }}>
+                    DESCARREGAR {selectedFormat.toUpperCase()}
+                  </button>
+                </div>
               </div>
             )}
           </div>
