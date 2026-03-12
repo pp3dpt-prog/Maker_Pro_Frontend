@@ -67,8 +67,18 @@ export default function STLMakerPro() {
       return;
     }
 
+    console.log("Dados a enviar:", {
+      email: wantNotifications ? notificationEmail : null, 
+      rating,
+      feedback: suggestions || null,
+      shape_type: shape, 
+      custom_name: name, 
+      file_url: stlUrl,
+      wants_notifications: wantNotifications
+    });
+
     // Grava no Supabase com rating, sugestões e notificações
-    const { error } = await supabase.from('downloads_log').insert([{ 
+    const { data, error } = await supabase.from('downloads_log').insert([{ 
       email: wantNotifications ? notificationEmail : null, 
       rating,
       feedback: suggestions || null, // Campo de sugestões
@@ -78,13 +88,16 @@ export default function STLMakerPro() {
       wants_notifications: wantNotifications
     }]);
 
+    console.log("Resposta Supabase:", { data, error });
+
     if (!error) {
       setShowThankYou(true);
       setShowDownload(true);
     } else {
-      console.error("Erro Supabase:", error);
-      setErrorMessage("Erro ao gravar dados: " + (error?.message || "Por favor, tenta novamente."));
-      setTimeout(() => setErrorMessage(''), 5000);
+      console.error("Erro Supabase completo:", error);
+      const errorMsg = error?.message || error?.details || JSON.stringify(error);
+      setErrorMessage("Erro: " + errorMsg);
+      setTimeout(() => setErrorMessage(''), 8000);
     }
   };
 
