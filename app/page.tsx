@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { Ticket, Users, CreditCard, Activity, Plus } from 'lucide-react';
 import CreateCouponForm from '@/components/admin/CreateCouponForm';
 import STLViewer from '@/components/STLViewer';
-import RegisterModal from '@/components/RegisterModal';
+// import RegisterModal from '@/components/RegisterModal'; // COMENTADO: Login desabilitado
 
 // APAGUE as linhas que usam createClient, supabaseUrl e supabaseKey aqui!
 
@@ -15,15 +15,14 @@ export default function STLMakerPro() {
   const [shape, setShape] = useState('Osso');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [stlUrl, setStlUrl] = useState(null);
   const [showDownload, setShowDownload] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para o Modal
+  const [wantNotifications, setWantNotifications] = useState(false);
+  const [notificationEmail, setNotificationEmail] = useState('');
 
-    // Efeito para carregar a forma "em branco" inicial
+  // Efeito para carregar a forma "em branco" inicial
   useEffect(() => {
     setStlUrl(`/models/blank_${shape.toLowerCase()}.stl`);
   }, [shape]);
@@ -49,25 +48,27 @@ export default function STLMakerPro() {
     }
   };
 
-  // 2. Submissão Final (Bloqueia se não houver Login)
+  // 2. Submissão Final (Sem verificação de login)
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
     
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-        setIsModalOpen(true); // Abre o modal se não estiver logado
-        return;
+    // COMENTADO: Verificação de login removida
+    
+    // Validação: email obrigatório se quer notificações
+    if (wantNotifications && !notificationEmail) {
+      alert("Por favor, insira um email válido para receber notificações.");
+      return;
     }
 
-    // Se logado, grava no Supabase e liberta download
+    // Grava no Supabase com apenas rating e notificações
     const { error } = await supabase.from('downloads_log').insert([{ 
-      email: user.email, 
+      email: wantNotifications ? notificationEmail : null, 
       rating,
-      feedback: comment,
+      feedback: null, // COMENTADO: Campo de comentário removido
       shape_type: shape, 
       custom_name: name, 
-      file_url: stlUrl 
+      file_url: stlUrl,
+      wants_notifications: wantNotifications
     }]);
 
     if (!error) setShowDownload(true);
@@ -76,15 +77,7 @@ export default function STLMakerPro() {
 
   return (
     <div className="container">
-      {/* Aqui chamas o teu Modal de Registo fora das tags de estilo */}
-      { <RegisterModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          onSuccess={() => {
-            setIsModalOpen(false);
-            setShowDownload(true);
-          }} 
-      /> }
+      {/* COMENTADO: Modal de Registo removido (login desabilitado) */}
 
       <style jsx>{`
         .container { display: flex; flex-direction: row; min-height: 100vh; background-color: #0f172a; color: #f1f5f9; font-family: sans-serif; }
@@ -129,7 +122,6 @@ export default function STLMakerPro() {
         <div className="section">
           <span className="label">2. Dados da Peça</span>
           
-          {/* ADICIONA O value={name} e value={phone} */}
           <input 
             type="text" 
             placeholder="Nome (Frente)" 
@@ -149,13 +141,37 @@ export default function STLMakerPro() {
 
         {stlUrl && (
           <div className="feedback-box">
-            <span className="label" style={{color: '#3b82f6'}}>3. Feedback & Download</span>
+            <span className="label" style={{color: '#3b82f6'}}>3. Avaliação & Download</span>
+            
+            {/* Campo de Estrelas */}
             <div className="stars">
               {[1,2,3,4,5].map(s => (
                 <button key={s} className={`star ${rating >= s ? 'active' : ''}`} onClick={() => setRating(s)}>★</button>
               ))}
             </div>
-            <textarea placeholder="Comentário (opcional)" onChange={(e) => setComment(e.target.value)} />
+            
+            {/* Pergunta de Notificações */}
+            <div style={{marginBottom: '15px', padding: '12px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '8px'}}>
+              <label style={{display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '10px'}}>
+                <input 
+                  type="checkbox" 
+                  checked={wantNotifications}
+                  onChange={(e) => setWantNotifications(e.target.checked)}
+                  style={{width: '18px', height: '18px', cursor: 'pointer'}}
+                />
+                <span style={{fontSize: '14px'}}>Queres ser informado de novas novidades?</span>
+              </label>
+              {wantNotifications && (
+                <input 
+                  type="email" 
+                  placeholder="teu@email.com"
+                  value={notificationEmail}
+                  onChange={(e) => setNotificationEmail(e.target.value)}
+                  required={wantNotifications}
+                  style={{width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: 'white', boxSizing: 'border-box', marginBottom: '0'}}
+                />
+              )}
+            </div>
             
             {!showDownload ? (
               <button className="btn-main" style={{background: '#059669'}} onClick={handleFinalSubmit}>LIBERTAR FICHEIRO</button>
@@ -177,7 +193,7 @@ export default function STLMakerPro() {
           </div>
         )}
       
-        {/* AQUI ESTÁ A MUDANÇA: Usamos o componente STLViewer se houver stlUrl */}
+        {/* Usamos o componente STLViewer se houver stlUrl */}
         {stlUrl ? (
           <STLViewer url={stlUrl} />
         ) : (
