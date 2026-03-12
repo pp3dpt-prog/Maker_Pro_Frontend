@@ -55,7 +55,11 @@ export default function STLMakerPro() {
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
     
-    // COMENTADO: Verificação de login removida
+    // Validação: rating obrigatório
+    if (rating === 0) {
+      alert("Por favor, dá uma avaliação (clica numa estrela)");
+      return;
+    }
     
     // Validação: email obrigatório se quer notificações
     if (wantNotifications && !notificationEmail) {
@@ -78,7 +82,8 @@ export default function STLMakerPro() {
       setShowThankYou(true);
       setShowDownload(true);
     } else {
-      setErrorMessage("Erro ao gravar dados. Por favor, tenta novamente.");
+      console.error("Erro Supabase:", error);
+      setErrorMessage("Erro ao gravar dados: " + (error?.message || "Por favor, tenta novamente."));
       setTimeout(() => setErrorMessage(''), 5000);
     }
   };
@@ -182,12 +187,15 @@ export default function STLMakerPro() {
             </div>
             
             {/* Campo de Sugestões */}
-            <textarea 
-              placeholder="Sugestões (opcional)" 
-              value={suggestions}
-              onChange={(e) => setSuggestions(e.target.value)}
-              style={{height: '80px', resize: 'none'}}
-            />
+            <div style={{marginBottom: '15px'}}>
+              <label style={{fontSize: '12px', color: '#64748b', marginBottom: '8px', display: 'block'}}>Sugestões</label>
+              <textarea 
+                placeholder="Deixa uma sugestão ou comentário (opcional)" 
+                value={suggestions}
+                onChange={(e) => setSuggestions(e.target.value)}
+                style={{height: '70px', resize: 'none', width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#f1f5f9', boxSizing: 'border-box', marginBottom: '15px', fontFamily: 'inherit'}}
+              />
+            </div>
             
             {/* Pergunta de Notificações */}
             <div style={{marginBottom: '15px', padding: '12px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '8px'}}>
