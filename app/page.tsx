@@ -16,11 +16,14 @@ export default function STLMakerPro() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [rating, setRating] = useState(0);
+  const [suggestions, setSuggestions] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [stlUrl, setStlUrl] = useState(null);
   const [showDownload, setShowDownload] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
   const [wantNotifications, setWantNotifications] = useState(false);
   const [notificationEmail, setNotificationEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Efeito para carregar a forma "em branco" inicial
   useEffect(() => {
@@ -60,24 +63,52 @@ export default function STLMakerPro() {
       return;
     }
 
-    // Grava no Supabase com apenas rating e notificações
+    // Grava no Supabase com rating, sugestões e notificações
     const { error } = await supabase.from('downloads_log').insert([{ 
       email: wantNotifications ? notificationEmail : null, 
       rating,
-      feedback: null, // COMENTADO: Campo de comentário removido
+      feedback: suggestions || null, // Campo de sugestões
       shape_type: shape, 
       custom_name: name, 
       file_url: stlUrl,
       wants_notifications: wantNotifications
     }]);
 
-    if (!error) setShowDownload(true);
-    else alert("Erro ao gravar dados.");
+    if (!error) {
+      setShowThankYou(true);
+      setShowDownload(true);
+    } else {
+      setErrorMessage("Erro ao gravar dados. Por favor, tenta novamente.");
+      setTimeout(() => setErrorMessage(''), 5000);
+    }
   };
 
   return (
     <div className="container">
       {/* COMENTADO: Modal de Registo removido (login desabilitado) */}
+
+      {/* Modal de Agradecimento */}
+      {showThankYou && (
+        <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000}}>
+          <div style={{background: '#1e293b', padding: '40px', borderRadius: '16px', textAlign: 'center', maxWidth: '400px', border: '1px solid #3b82f6'}}>
+            <h2 style={{fontSize: '28px', marginBottom: '10px', color: '#3b82f6'}}>Obrigado! 🎉</h2>
+            <p style={{color: '#94a3b8', marginBottom: '20px', lineHeight: '1.6'}}>A tua avaliação foi gravada com sucesso. Aprecia muito o teu feedback!</p>
+            {wantNotifications && (
+              <p style={{color: '#64748b', fontSize: '13px', marginBottom: '20px'}}>Vamos enviar novidades para: <strong>{notificationEmail}</strong></p>
+            )}
+            <a href={stlUrl} download onClick={() => setShowThankYou(false)} style={{display: 'inline-block', padding: '12px 28px', background: '#3b82f6', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', cursor: 'pointer', border: 'none'}}>
+              Descarregar STL
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Mensagem de Erro */}
+      {errorMessage && (
+        <div style={{position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', background: '#dc2626', color: 'white', padding: '15px 20px', borderRadius: '8px', zIndex: 999, maxWidth: '80%'}}>
+          {errorMessage}
+        </div>
+      )}
 
       <style jsx>{`
         .container { display: flex; flex-direction: row; min-height: 100vh; background-color: #0f172a; color: #f1f5f9; font-family: sans-serif; }
@@ -150,6 +181,14 @@ export default function STLMakerPro() {
               ))}
             </div>
             
+            {/* Campo de Sugestões */}
+            <textarea 
+              placeholder="Sugestões (opcional)" 
+              value={suggestions}
+              onChange={(e) => setSuggestions(e.target.value)}
+              style={{height: '80px', resize: 'none'}}
+            />
+            
             {/* Pergunta de Notificações */}
             <div style={{marginBottom: '15px', padding: '12px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '8px'}}>
               <label style={{display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '10px'}}>
@@ -176,9 +215,18 @@ export default function STLMakerPro() {
             {!showDownload ? (
               <button className="btn-main" style={{background: '#059669'}} onClick={handleFinalSubmit}>LIBERTAR FICHEIRO</button>
             ) : (
-              <a href={stlUrl} download className="btn-main" style={{display: 'block', textAlign: 'center', textDecoration: 'none', background: 'linear-gradient(to right, #f59e0b, #d97706)'}}>
-                BAIXAR .STL
-              </a>
+              <div style={{display: 'flex', gap: '10px'}}>
+                <button className="btn-main" style={{background: 'linear-gradient(to right, #f59e0b, #d97706)', flex: 1}} onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = stlUrl;
+                  link.download = 'modelo.stl';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}>
+                  DESCARREGAR STL
+                </button>
+              </div>
             )}
           </div>
         )}
