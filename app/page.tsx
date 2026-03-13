@@ -299,6 +299,23 @@ export default function STLMakerPro() {
           </div>
         )}
       </div>
+
+      {/* Nota de rodapé */}
+      <footer style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: 'rgba(15, 23, 42, 0.95)',
+        color: '#cbd5e1',
+        fontSize: '12px',
+        padding: '8px 12px',
+        textAlign: 'center',
+        borderTop: '1px solid rgba(148, 163, 184, 0.2)',
+        zIndex: 50,
+      }}>
+        🔔 <strong>Versão de teste:</strong> melhorias diárias. Para receber novidades, adiciona o teu email no formulário acima ou entra no Discord: <a href="https://discord.gg/PNWMa9xF" style={{color: '#3b82f6', textDecoration: 'underline'}} target="_blank" rel="noreferrer">discord.gg/PNWMa9xF</a>. Uso pessoal apenas; para licença comercial, fala com o proprietário no Discord.
+      </footer>
     </div>
   );
 }
