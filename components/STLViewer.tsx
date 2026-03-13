@@ -12,8 +12,15 @@ function Model({ url }: { url: string }) {
 
   return (
     <mesh geometry={geometry} castShadow receiveShadow>
-      <meshStandardMaterial color="#3b82f6" roughness={0.2} metalness={0.9} />
-    </mesh>
+  <meshPhysicalMaterial
+    color="#3b82f6"      // Podes mudar para a cor que quiseres (ex: Azul, Branco, etc.)
+    roughness={0.7}      // O PLA não é um espelho, é mate/acetinado
+    metalness={0.0}      // PLA é plástico, nunca deve ter valor de metal
+    clearcoat={0.1}      // Um brilho muito subtil para simular a camada de topo
+    clearcoatRoughness={0.5} 
+    reflectivity={0.5}   // Refletividade padrão para plásticos
+  />
+</mesh>
   );
 }
 
