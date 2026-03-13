@@ -224,6 +224,7 @@ export default function STLMakerPro() {
               <textarea 
                 placeholder="Deixa uma sugestão ou comentário (opcional)" 
                 value={suggestions}
+                
                 onChange={(e) => setSuggestions(e.target.value)}
                 style={{height: '70px', resize: 'none', width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#f1f5f9', boxSizing: 'border-box', marginBottom: '15px', fontFamily: 'inherit'}}
               />
