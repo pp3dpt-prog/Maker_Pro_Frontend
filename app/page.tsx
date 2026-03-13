@@ -308,7 +308,7 @@ export default function STLMakerPro() {
         right: 0,
         background: 'rgba(15, 23, 42, 0.95)',
         color: '#cbd5e1',
-        fontSize: '12px',
+        fontSize: '15px',
         padding: '8px 12px',
         textAlign: 'center',
         borderTop: '1px solid rgba(148, 163, 184, 0.2)',
