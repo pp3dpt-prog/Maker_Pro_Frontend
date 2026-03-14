@@ -8,8 +8,8 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 // 1. Definimos a interface aqui. Isto diz ao componente exatamente o que ele recebe.
 interface STLViewerProps {
   url: string | null;
-  name: string;
-  phone: string;
+  name?: string; // O '?' torna a propriedade opcional
+  phone?: string; // O '?' torna a propriedade opcional
 }
 
 function Model({ url }: { url: string }) {

@@ -293,7 +293,10 @@ export default function STLMakerPro() {
       
         {/* Usamos o componente STLViewer se houver stlUrl */}
         {stlUrl ? (
-          <STLViewer url={stlUrl} />
+          <STLViewer url={stlUrl} 
+          name={name}      // Passa a variável de estado 'name'
+          phone={phone}    // Passa a variável de estado 'phone'
+          />
         ) : (
           <div className="model-placeholder">
             <span>A carregar visualizador...</span>
